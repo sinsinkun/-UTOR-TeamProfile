@@ -10,26 +10,92 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+async function main() {
 
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
+  let employeeArr = [];
+  // Add employees
+  let addMoreEmployees = true;
+  let i = 1;
+  while (addMoreEmployees) {
+    const more = await inquirer.prompt([
+      {
+        type: 'list',
+        message: 'Add a new employee or exit:',
+        choices: ['Add Manager', 'Add Engineer', 'Add Intern', 'Exit'],
+        name: 'choice'
+      }
+    ])
+    if (more.choice === 'Exit') addMoreEmployees = false;
+    else if (more.choice === 'Add Manager') {
+      const managerInfo = await inquirer.prompt([
+        {
+          type: 'input',
+          message: 'Please enter Manager\'s name:',
+          name: 'name'
+        },
+        {
+          type: 'input',
+          message: 'Please enter Manager\'s email:',
+          name: 'email'
+        },
+        {
+          type: 'input',
+          message: 'Please enter Manager\'s Office number:',
+          name: 'officeNum'
+        }
+      ])
+      employeeArr.push(new Manager(managerInfo.name, 1, managerInfo.email, managerInfo.officeNum));
+    }
+    else if (more.choice === 'Add Engineer') {
+      const engInfo = await inquirer.prompt([
+        {
+          type: 'input',
+          message: 'Please enter Engineer\'s name:',
+          name: 'name'
+        },
+        {
+          type: 'input',
+          message: 'Please enter Engineer\'s email:',
+          name: 'email'
+        },
+        {
+          type: 'input',
+          message: 'Please enter Engineer\'s github:',
+          name: 'github'
+        }
+      ])
+      employeeArr.push(new Engineer(engInfo.name, i, engInfo.email, engInfo.github));
+    }
+    else if (more.choice === 'Add Intern') {
+      const intInfo = await inquirer.prompt([
+        {
+          type: 'input',
+          message: 'Please enter Intern\'s name:',
+          name: 'name'
+        },
+        {
+          type: 'input',
+          message: 'Please enter Intern\'s email:',
+          name: 'email'
+        },
+        {
+          type: 'input',
+          message: 'Please enter Intern\'s school:',
+          name: 'school'
+        }
+      ])
+      employeeArr.push(new Intern(intInfo.name, i, intInfo.email, intInfo.school));
+    }
+    i++;
+    console.log('');
+  }
 
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
+  console.log('All Employees registered, creating team page.');
+  // Convert objects to HTML
+  const html = render(employeeArr);
+  // Write output file
+  if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR);
+  fs.writeFileSync(outputPath, html);
+}
 
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
-
-// HINT: each employee type (manager, engineer, or intern) has slightly different
-// information; write your code to ask different questions via inquirer depending on
-// employee type.
-
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-// and Intern classes should all extend from a class named Employee; see the directions
-// for further information. Be sure to test out each class and verify it generates an
-// object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work! ```
+main();
