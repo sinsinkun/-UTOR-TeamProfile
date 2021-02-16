@@ -44,7 +44,7 @@ async function main() {
           name: 'officeNum'
         }
       ])
-      employeeArr.push(new Manager(managerInfo.name, 1, managerInfo.email, managerInfo.officeNum));
+      employeeArr.push(new Manager(managerInfo.name, i, managerInfo.email, managerInfo.officeNum));
     }
     else if (more.choice === 'Add Engineer') {
       const engInfo = await inquirer.prompt([
